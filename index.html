@@ -312,6 +312,95 @@
     background:rgba(33,27,18,0.08);
     color:var(--ink-soft);
   }
+  .tag-pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:rgba(62,148,132,0.14);
+    color:#0D4A5C;
+  }
+  .related-pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    padding:3px 8px;
+    border-radius:999px;
+    background:rgba(177,77,93,0.12);
+    color:#6E2430;
+    border:none;
+    cursor:pointer;
+  }
+  .related-pill:hover{background:rgba(177,77,93,0.22);}
+
+  .card-img{
+    display:block;
+    width:100%;
+    max-height:220px;
+    object-fit:cover;
+    border-radius:2px;
+    margin:0 0 12px;
+  }
+
+  .rating-row{
+    margin:0 0 10px 20px;
+    display:flex; flex-wrap:wrap; gap:6px;
+  }
+  .rating-pill{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    padding:3px 8px;
+    border-radius:2px;
+    background:rgba(33,27,18,0.06);
+    color:var(--ink-soft);
+  }
+  .rating-pill.practiced{
+    background:rgba(62,148,132,0.18);
+    color:#0D4A5C;
+    font-weight:700;
+  }
+  .result-line{
+    margin:10px 0 0 20px;
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11.5px;
+    color:#0D4A5C;
+    background:rgba(62,148,132,0.1);
+    padding:4px 9px;
+    border-radius:2px;
+  }
+  .ai-block{
+    margin:14px 0 0 20px;
+    background:rgba(33,27,18,0.05);
+    border:1px dashed #C9BB98;
+    border-radius:2px;
+    padding:10px 12px;
+  }
+  .ai-block-head{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .mini-copy{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    background:none;
+    border:1px solid #C9BB98;
+    color:var(--ink-soft);
+    padding:2px 7px;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  .mini-copy:hover{border-color:var(--teal); color:var(--teal);}
+  .ai-block-body{
+    font-size:12.5px;
+    line-height:1.75;
+    color:#3A3122;
+    white-space:pre-wrap;
+  }
 
   .empty{
     padding:60px 20px;
@@ -447,25 +536,87 @@
   <div class="modal">
     <h2>新しいカードを追加</h2>
     <div class="field">
+      <label>まとめて貼り付け（任意）</label>
+      <textarea id="f-paste" style="min-height:70px;" placeholder="InstagramのキャプションやURL、プロンプトなど、コピーしたものをそのまま貼り付けOK"></textarea>
+      <div class="hint">貼り付けると自動でタイトル・URL・本文・AIプロンプトに振り分けます（既に入力済みの項目は上書きしません）。うまく分かれなければ下で自由に編集してください。</div>
+      <div class="modal-actions" style="justify-content:flex-start; margin-top:8px;">
+        <button type="button" class="btn-ghost" onclick="distributePaste()">下の項目に反映する</button>
+      </div>
+    </div>
+    <div class="field">
       <label>タイトル</label>
-      <input type="text" id="f-title" placeholder="例：夕方の斜め光を使ったbefore/after撮影">
+      <input type="text" id="f-title" placeholder="例：保存率を上げる数字タイトル">
+      <div class="hint">1カード1知識が理想です（広すぎるタイトルにしない）。</div>
     </div>
     <div class="field">
       <label>カテゴリ</label>
-      <select id="f-cat" onchange="toggleUrlField()"></select>
-    </div>
-    <div class="field" id="f-url-field" style="display:none;">
-      <label>URL（元の投稿・動画・アカウントへのリンク）</label>
-      <input type="text" id="f-url" placeholder="https://www.instagram.com/... など">
-      <div class="hint">※画像・動画そのものは保存せず、リンクと自分用メモのみ保存します（著作権・規約への配慮）</div>
+      <select id="f-cat"></select>
     </div>
     <div class="field">
-      <label>ニッチ（複数選択可）</label>
+      <label>参考URL（任意）</label>
+      <input type="text" id="f-url" placeholder="https://www.instagram.com/... など">
+      <div class="hint">※画像・動画そのものは保存せず、リンクのみ保存します（著作権・規約への配慮）</div>
+    </div>
+    <div class="field">
+      <label>ニッチ／業種（複数選択可）</label>
       <div class="check-grid" id="f-niches"></div>
     </div>
     <div class="field">
-      <label id="f-body-label">内容・メモ</label>
-      <textarea id="f-body" placeholder="やり方、角度、気づいたこと、何が良かったか、数字など具体的に"></textarea>
+      <label>内容・メモ</label>
+      <textarea id="f-body" placeholder="【概要】&#10;&#10;【結論】&#10;&#10;【なぜ？】&#10;&#10;【実践方法】&#10;&#10;【使える場面】&#10;&#10;【心理効果】&#10;&#10;【参考】"></textarea>
+      <div class="hint">【概要】【結論】【なぜ？】【実践方法】【使える場面】【心理効果】のようなテンプレ形式で書くと、後で自分にもAIにも読みやすくなります。</div>
+    </div>
+    <div class="field">
+      <label>評価</label>
+      <div class="check-grid">
+        <div>
+          <div class="hint" style="margin:0 0 4px;">重要度</div>
+          <select id="f-importance">
+            <option value="0">未設定</option>
+            <option value="1">★☆☆☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="4">★★★★☆</option>
+            <option value="5">★★★★★</option>
+          </select>
+        </div>
+        <div>
+          <div class="hint" style="margin:0 0 4px;">効果</div>
+          <select id="f-effect">
+            <option value="0">未設定</option>
+            <option value="1">★☆☆☆☆</option>
+            <option value="2">★★☆☆☆</option>
+            <option value="3">★★★☆☆</option>
+            <option value="4">★★★★☆</option>
+            <option value="5">★★★★★</option>
+          </select>
+        </div>
+        <label class="check-item"><input type="checkbox" id="f-practiced"> 実践済み</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>結果（任意）</label>
+      <input type="text" id="f-result" placeholder="例：保存率+43% / 問い合わせ12件増加">
+    </div>
+    <div class="field">
+      <label>タグ（任意・スペース区切り）</label>
+      <input type="text" id="f-tags" placeholder="#Instagram #心理学 #営業 #保存率">
+    </div>
+    <div class="field">
+      <label>関連（任意・カンマ区切り）</label>
+      <input type="text" id="f-related" placeholder="例：ストーリーテリング, ギフト効果, 口コミ">
+      <div class="hint">関連するキーワードや他カードのタイトルを書いておくと、カード上でタップしてその言葉を検索できます。</div>
+    </div>
+    <div class="field">
+      <label>AIプロンプト（任意）</label>
+      <textarea id="f-aiprompt" placeholder="ClaudeやChatGPTにそのまま渡す指示文"></textarea>
+    </div>
+    <div class="field">
+      <label>画像（任意・スクショなど）</label>
+      <input type="file" id="f-image-input" accept="image/*">
+      <input type="hidden" id="f-image-data">
+      <img id="f-image-preview" style="display:none; max-width:100%; margin-top:8px; border-radius:2px;">
+      <div class="hint">端末内（localStorage）に保存されます。枚数や画像サイズが多いと保存できなくなることがあるので、大事なものだけに絞るのがおすすめです。</div>
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" onclick="closeModal()">キャンセル</button>
@@ -516,73 +667,80 @@
 </div>
 
 <script>
-const CATS = ["すべて","写真の撮り方","SNS戦略","フレームワーク","チェックリスト","フック集","参考写真・動画","参考アカウント","台本・スクリプト"];
+const CATS = ["すべて","🧠 マーケティング理論","🧠 心理学・認知バイアス","🧠 行動経済学","📱 SNS戦略（Instagram・TikTok・YouTube・X）","📸 写真・動画撮影","🎨 デザイン・色彩心理","✍️ コピーライティング","💰 セールス・営業","📈 広告運用（Meta・Google・TikTok）","🏠 外壁塗装専用ノウハウ","💧 洗浄王専用ノウハウ","🤖 AIプロンプト集","📋 チェックリスト","📚 フレームワーク","🔍 競合分析","💡 成功事例・失敗事例"];
 const CAT_COLOR = {
-  "写真の撮り方":"#3E9484",
-  "SNS戦略":"#B14D5D",
-  "フレームワーク":"#8C6D1F",
-  "チェックリスト":"#4A5A8C",
-  "フック集":"#7A4A8C",
-  "参考写真・動画":"#2B6E8C",
-  "参考アカウント":"#8C4E2B",
-  "台本・スクリプト":"#5A7A2B"
+  "🧠 マーケティング理論":"#6E4FA0",
+  "🧠 心理学・認知バイアス":"#A04F8C",
+  "🧠 行動経済学":"#4F5FA0",
+  "📱 SNS戦略（Instagram・TikTok・YouTube・X）":"#B14D5D",
+  "📸 写真・動画撮影":"#3E9484",
+  "🎨 デザイン・色彩心理":"#C2703D",
+  "✍️ コピーライティング":"#7A4A8C",
+  "💰 セールス・営業":"#2B6E8C",
+  "📈 広告運用（Meta・Google・TikTok）":"#4A5A8C",
+  "🏠 外壁塗装専用ノウハウ":"#8C6D1F",
+  "💧 洗浄王専用ノウハウ":"#1F8C6D",
+  "🤖 AIプロンプト集":"#5A7A2B",
+  "📋 チェックリスト":"#3D6B8C",
+  "📚 フレームワーク":"#8C3D3D",
+  "🔍 競合分析":"#6B6B6B",
+  "💡 成功事例・失敗事例":"#A0742F"
 };
-const LINK_CATS = new Set(["参考写真・動画","参考アカウント"]);
 const NICHES = ["汎用","オシャレホーム","洗浄王","かき氷","Etsy/Wildbloom","フィールド点検シート","家族/キッズ声優"];
 
 const DEFAULT_CARDS = [
-  // ---- 写真の撮り方 ----
-  {id:"p1", cat:"写真の撮り方", niches:["汎用","オシャレホーム","洗浄王"], title:"Before/Afterは「同じ場所・同じ角度・同じ距離」で撮る",
+  // ---- 写真・動画撮影 ----
+  {id:"p1", cat:"📸 写真・動画撮影", niches:["汎用","オシャレホーム","洗浄王"], title:"Before/Afterは「同じ場所・同じ角度・同じ距離」で撮る",
    body:"三脚がなくても、足の位置を地面にチョークや養生テープで印をつけて固定する。角度がズレると変化が伝わらず、コメント欄で「加工では？」と疑われる原因になる。before撮影時に必ずafterの撮影位置もメモしておく。"},
-  {id:"p2", cat:"写真の撮り方", niches:["汎用","洗浄王"], title:"光は「順光より半逆光」が汚れ・質感を拾う",
+  {id:"p2", cat:"📸 写真・動画撮影", niches:["汎用","洗浄王"], title:"光は「順光より半逆光」が汚れ・質感を拾う",
    body:"真正面からの順光は汚れがフラットに見えて伝わりにくい。太陽を斜め後ろ〜横にして影を作ると、外壁の凹凸・汚れの深さ・洗浄後の質感差が際立つ。晴天の朝10時前 or 夕方16時以降が狙い目。"},
-  {id:"p3", cat:"写真の撮り方", niches:["汎用","かき氷"], title:"食べ物は「45度・目線少し上から」が最も美味しそうに見える",
+  {id:"p3", cat:"📸 写真・動画撮影", niches:["汎用","かき氷"], title:"食べ物は「45度・目線少し上から」が最も美味しそうに見える",
    body:"真上(俯瞰)は情報量が多い時、45度は立体感と湯気/シロップの質感が出る時に使う。かき氷は特に、スプーンを入れた直後の「崩れかけ」の一瞬を連写で狙うと保存率が上がる。背景は寒色より暖色(木目・南国っぽい柄)でコントラストを作る。"},
-  {id:"p4", cat:"写真の撮り方", niches:["汎用"], title:"リールの冒頭0.5秒は「静止画としても成立する構図」にする",
+  {id:"p4", cat:"📸 写真・動画撮影", niches:["汎用"], title:"リールの冒頭0.5秒は「静止画としても成立する構図」にする",
    body:"サムネ代わりの1コマ目が止まっても伝わるかを確認する。人の顔・驚きの表情・数字が入ったテロップは初速の再生維持率を上げる。"},
-  {id:"p5", cat:"写真の撮り方", niches:["汎用","Etsy/Wildbloom"], title:"商品写真は「使用シーン1枚＋単体1枚＋ディテール1枚」の3点セット",
+  {id:"p5", cat:"📸 写真・動画撮影", niches:["汎用","Etsy/Wildbloom"], title:"商品写真は「使用シーン1枚＋単体1枚＋ディテール1枚」の3点セット",
    body:"単体だけだとサイズ感・使用感が伝わらない。屋外アウトドア系なら自然光＋実際に使っている手元/背景を入れると信頼感が上がる。"},
-  {id:"p6", cat:"写真の撮り方", niches:["汎用","洗浄王","オシャレホーム"], title:"施工中カットは「手元アップ」を必ず1枚入れる",
+  {id:"p6", cat:"📸 写真・動画撮影", niches:["汎用","洗浄王","オシャレホーム"], title:"施工中カットは「手元アップ」を必ず1枚入れる",
    body:"引きの全体像だけでなく、道具や薬剤を扱う手元のクローズアップを挟むと「プロが丁寧にやっている」印象が強まる。音声ONで作業音を拾うとリールの没入感も上がる。"},
 
   // ---- SNS戦略 ----
-  {id:"s1", cat:"SNS戦略", niches:["汎用"], title:"アルゴリズム評価の優先順位：保存＞シェア＞滞在時間＞コメント＞いいね",
+  {id:"s1", cat:"📱 SNS戦略（Instagram・TikTok・YouTube・X）", niches:["汎用"], title:"アルゴリズム評価の優先順位：保存＞シェア＞滞在時間＞コメント＞いいね",
    body:"投稿設計はまず「保存したくなる情報」があるかを最優先でチェックする。いいねだけ多くて保存が少ない投稿は伸びが続かない傾向。"},
-  {id:"s2", cat:"SNS戦略", niches:["オシャレホーム","洗浄王"], title:"リールの鉄板構成：驚き→理由→数字→CTA",
+  {id:"s2", cat:"📱 SNS戦略（Instagram・TikTok・YouTube・X）", niches:["オシャレホーム","洗浄王"], title:"リールの鉄板構成：驚き→理由→数字→CTA",
    body:"0-1秒:ビフォーの驚き / 1-3秒:何をしたか一言 / 3-8秒:作業ダイジェスト / 8-10秒:アフター＋具体的数字（40㎡/15分など）/ 最後にコメント欄 or プロフィールへ誘導。"},
-  {id:"s3", cat:"SNS戦略", niches:["汎用"], title:"ハッシュタグはビッグ2-3・ミドル3-5・スモール(地域名等)3-5",
+  {id:"s3", cat:"📱 SNS戦略（Instagram・TikTok・YouTube・X）", niches:["汎用"], title:"ハッシュタグはビッグ2-3・ミドル3-5・スモール(地域名等)3-5",
    body:"「さいたま市 外壁洗浄」のような地域名×サービス名の複合語は競合が少なく上位表示されやすい。"},
-  {id:"s4", cat:"SNS戦略", niches:["汎用"], title:"LINE公式は「個別最適化された次の一歩」を必ず用意する",
+  {id:"s4", cat:"📱 SNS戦略（Instagram・TikTok・YouTube・X）", niches:["汎用"], title:"LINE公式は「個別最適化された次の一歩」を必ず用意する",
    body:"問い合わせトリアージ→同意テンプレート→施工完了報告書、のように、今どの段階にいる人にも次にすべき行動が1つだけ見えるようにする。"},
 
   // ---- フレームワーク ----
-  {id:"f1", cat:"フレームワーク", niches:["汎用"], title:"AIDA（注意→興味→欲求→行動）",
+  {id:"f1", cat:"📚 フレームワーク", niches:["汎用"], title:"AIDA（注意→興味→欲求→行動）",
    body:"広告文・LP全体の骨格に。冒頭で目を引き、興味を持たせ、欲しい理由を積み上げ、最後に明確な行動を1つ提示する。"},
-  {id:"f2", cat:"フレームワーク", niches:["汎用","洗浄王"], title:"PASONA（問題→煽り→解決→絞込→行動）",
+  {id:"f2", cat:"📚 フレームワーク", niches:["汎用","洗浄王"], title:"PASONA（問題→煽り→解決→絞込→行動）",
    body:"営業スクリプトやDM営業文に。「このまま放置すると」の煽りは誇張しすぎず、事実ベースの数字(劣化速度・修繕費の差)で語ると信頼を損なわない。"},
-  {id:"f3", cat:"フレームワーク", niches:["汎用"], title:"PREP（結論→理由→具体例→結論）",
+  {id:"f3", cat:"📚 フレームワーク", niches:["汎用"], title:"PREP（結論→理由→具体例→結論）",
    body:"キャプションや投稿文の構成に。最初に結論を言い切ることで、最後まで読まれなくても要点が伝わる。"},
-  {id:"f4", cat:"フレームワーク", niches:["洗浄王","フィールド点検シート"], title:"3C分析（自社・競合・顧客）",
+  {id:"f4", cat:"🔍 競合分析", niches:["洗浄王","フィールド点検シート"], title:"3C分析（自社・競合・顧客）",
    body:"新エリア展開(嵐山町など)や新規事業の前に、自社の強み・競合の価格帯とサービス範囲・顧客が本当に困っていることを1枚にまとめてから動く。"},
 
   // ---- チェックリスト ----
-  {id:"c1", cat:"チェックリスト", niches:["汎用"], title:"投稿を出す前の最終チェック",
+  {id:"c1", cat:"📋 チェックリスト", niches:["汎用"], title:"投稿を出す前の最終チェック",
    body:"□ペルソナは1人に絞れているか\n□冒頭フックは0.5秒で成立するか\n□保存したくなる情報が1つ以上あるか\n□CTAは1つだけに絞ったか\n□ハッシュタグ(ビッグ/ミドル/スモール)を入れたか"},
-  {id:"c2", cat:"チェックリスト", niches:["洗浄王"], title:"施工可否・営業トーク前チェック",
+  {id:"c2", cat:"📋 チェックリスト", niches:["洗浄王"], title:"施工可否・営業トーク前チェック",
    body:"□気温5℃以上か\n□雨予報50%を超えていないか\n□保証内容(サイディング90日/塗り壁60日/木部対象外/ソーラー30日)を伝えたか\n□40㎡アンカリングで価格感を先に提示したか"},
-  {id:"c3", cat:"チェックリスト", niches:["かき氷"], title:"新メニュー・テスト販売前チェック",
+  {id:"c3", cat:"📋 チェックリスト", niches:["かき氷"], title:"新メニュー・テスト販売前チェック",
    body:"□原価と想定売価から粗利を試算したか(例:99円cup、材料費14円想定)\n□人件費を1日の稼働時間で割って採算ラインを出したか\n□写真映えする盛り付け(45度・崩れかけの一瞬)を先に撮っておいたか"},
-  {id:"c4", cat:"チェックリスト", niches:["家族/キッズ声優"], title:"子供出演コンテンツの安全チェック",
+  {id:"c4", cat:"📋 チェックリスト", niches:["家族/キッズ声優"], title:"子供出演コンテンツの安全チェック",
    body:"□フルネーム・通っている学校・地域が特定できる情報を出していないか\n□コメント欄の管理方針(オフ/承認制など)を決めたか\n□本人が「やりたい」と言った回だけ収録しているか(嫌がる時は無理にやらない)\n□投稿頻度・出演範囲について本人と話す時間を定期的に作っているか\n□お小遣いの金額とルール(1本いくら、貯める/使う配分など)を先に決めたか"},
 
-  // ---- フック集 ----
-  {id:"h1", cat:"フック集", niches:["汎用"], title:"驚き系オープニング",
+  // ---- コピーライティング（フック集） ----
+  {id:"h1", cat:"✍️ コピーライティング", niches:["汎用"], title:"驚き系オープニング",
    body:"「え、同じ壁ですか？」「これ、洗浄しただけです」など、見た人が“信じられない”と感じる一言をテロップ1行目に置く。"},
-  {id:"h2", cat:"フック集", niches:["汎用"], title:"警告・あるある系オープニング",
+  {id:"h2", cat:"✍️ コピーライティング", niches:["汎用"], title:"警告・あるある系オープニング",
    body:"「〇〇な人は今すぐチェック」「知らないと後悔する〇〇」で自分ごと化させる。誇張しすぎると信頼を損なうので事実ベースで。"},
-  {id:"h3", cat:"フック集", niches:["汎用"], title:"数字系オープニング",
+  {id:"h3", cat:"✍️ コピーライティング", niches:["汎用"], title:"数字系オープニング",
    body:"「40㎡を15分で」「材料費たった14円」など、具体的な数字を最初の1行に置くと止め率が上がる。"},
-  {id:"h4", cat:"フック集", niches:["家族/キッズ声優"], title:"子供アフレコ企画",
+  {id:"h4", cat:"✍️ コピーライティング", niches:["家族/キッズ声優"], title:"子供アフレコ企画",
    body:"既存の映像(施工前後・かき氷作り等)に、子供の音読練習を活かしたナレーションを後乗せする。素朴な声＋子供らしい言い回しのギャップが保存/シェア率を上げやすい。顔出し不要なので撮り直しの負担も少ない。台本は本人の音読レベルに合わせて短く区切る。"}
 ];
 
@@ -652,7 +810,7 @@ function buildChips(){
   const nicheWrap = document.getElementById('nicheChips');
   nicheWrap.innerHTML = '<span class="group-label">NICHE</span>' + NICHES.map(n =>
     `<button class="chip" data-active="${activeNiches.has(n)?1:0}" onclick="toggleNiche('${n}')">${n}</button>`
-  ).join('');
+  ).join('') + `<span class="group-label" style="margin-left:10px;">絞り込み</span><button class="chip" data-active="${practicedOnly?1:0}" onclick="togglePracticedOnly()">実践済みのみ</button>`;
 }
 
 function setCat(c){ activeCat = c; buildChips(); render(); }
@@ -666,8 +824,12 @@ function render(){
   const cards = allCards().filter(c => {
     if(activeCat !== "すべて" && c.cat !== activeCat) return false;
     if(activeNiches.size > 0 && !c.niches.some(n => activeNiches.has(n))) return false;
+    if(practicedOnly && !c.practiced) return false;
     if(q){
-      const hay = (c.title + ' ' + c.body + ' ' + c.niches.join(' ')).toLowerCase();
+      const hay = [
+        c.title, c.body, (c.niches||[]).join(' '), (c.tags||[]).join(' '),
+        (c.related||[]).join(' '), c.result||'', c.aiPrompt||''
+      ].join(' ').toLowerCase();
       if(!hay.includes(q)) return false;
     }
     return true;
@@ -681,20 +843,38 @@ function render(){
     return;
   }
 
+  const stars = (n) => '★'.repeat(n) + '☆'.repeat(5-n);
+
   grid.innerHTML = cards.map((c,i) => {
     const tilt = ((i % 5) - 2) * 0.35;
     const color = CAT_COLOR[c.cat] || '#59503E';
     const isUser = c.id.startsWith('u-');
+    const hasRating = (c.importance > 0) || (c.effect > 0) || c.practiced;
     return `
       <div class="card" style="--tilt:${tilt}deg">
         <div class="card-top">
-          <span class="cat-tag" style="background:${color}">${c.cat}</span>
+          <span class="cat-tag" style="background:${color}">${escapeHtml(c.cat)}</span>
           ${isUser ? `<button class="del-btn" onclick="deleteCard('${c.id}')" title="削除">✕</button>` : ''}
         </div>
+        ${c.image ? `<img class="card-img" src="${c.image}" alt="">` : ''}
         <h3>${escapeHtml(c.title)}</h3>
         ${c.url ? `<a class="link-btn" href="${escapeAttr(c.url)}" target="_blank" rel="noopener noreferrer">🔗 元のリンクを開く</a>` : ''}
+        ${hasRating ? `<div class="rating-row">
+          ${c.importance ? `<span class="rating-pill">重要度 ${stars(c.importance)}</span>` : ''}
+          ${c.effect ? `<span class="rating-pill">効果 ${stars(c.effect)}</span>` : ''}
+          ${c.practiced ? `<span class="rating-pill practiced">実践済み</span>` : ''}
+        </div>` : ''}
         <div class="body">${escapeHtml(c.body)}</div>
-        <div class="niches">${c.niches.map(n=>`<span class="niche-pill">${n}</span>`).join('')}</div>
+        ${c.result ? `<div class="result-line">結果：${escapeHtml(c.result)}</div>` : ''}
+        ${c.aiPrompt ? `<div class="ai-block">
+          <div class="ai-block-head">AIプロンプト <button class="mini-copy" onclick="copyAiPrompt(this)" data-prompt="${escapeAttr(c.aiPrompt)}">コピー</button></div>
+          <div class="ai-block-body">${escapeHtml(c.aiPrompt)}</div>
+        </div>` : ''}
+        <div class="niches">
+          ${(c.niches||[]).map(n=>`<span class="niche-pill">${escapeHtml(n)}</span>`).join('')}
+          ${(c.tags||[]).map(t=>`<span class="tag-pill">#${escapeHtml(t)}</span>`).join('')}
+          ${(c.related||[]).map(r=>`<button class="related-pill" onclick="searchFor('${escapeAttr(r)}')">↔ ${escapeHtml(r)}</button>`).join('')}
+        </div>
       </div>
     `;
   }).join('');
@@ -715,26 +895,6 @@ async function deleteCard(id){
   render();
 }
 
-function toggleUrlField(){
-  const cat = document.getElementById('f-cat').value;
-  const urlField = document.getElementById('f-url-field');
-  const bodyLabel = document.getElementById('f-body-label');
-  const bodyArea = document.getElementById('f-body');
-  if(LINK_CATS.has(cat)){
-    urlField.style.display = 'block';
-    bodyLabel.textContent = '自分用メモ（何が良かったか・何を参考にするか）';
-    bodyArea.placeholder = '例：夕方の逆光を活かした投稿。真似したいのは光の使い方と最初の1秒の見せ方';
-  } else if(cat === '台本・スクリプト'){
-    urlField.style.display = 'none';
-    bodyLabel.textContent = '台本・スクリプト本文';
-    bodyArea.placeholder = '自分で書いたトーク台本やキャプション文をそのまま貼り付け';
-  } else {
-    urlField.style.display = 'none';
-    bodyLabel.textContent = '内容・メモ';
-    bodyArea.placeholder = 'やり方、角度、気づいたこと、数字など具体的に';
-  }
-}
-
 function openModal(){
   const catSel = document.getElementById('f-cat');
   catSel.innerHTML = CATS.filter(c=>c!=="すべて").map(c=>`<option value="${c}">${c}</option>`).join('');
@@ -742,14 +902,105 @@ function openModal(){
   nichesWrap.innerHTML = NICHES.map(n => `
     <label class="check-item"><input type="checkbox" value="${n}" class="niche-check"> ${n}</label>
   `).join('');
+  document.getElementById('f-paste').value = '';
   document.getElementById('f-title').value = '';
   document.getElementById('f-body').value = '';
   document.getElementById('f-url').value = '';
-  toggleUrlField();
+  document.getElementById('f-importance').value = '0';
+  document.getElementById('f-effect').value = '0';
+  document.getElementById('f-practiced').checked = false;
+  document.getElementById('f-result').value = '';
+  document.getElementById('f-tags').value = '';
+  document.getElementById('f-related').value = '';
+  document.getElementById('f-aiprompt').value = '';
+  document.getElementById('f-image-input').value = '';
+  document.getElementById('f-image-data').value = '';
+  const preview = document.getElementById('f-image-preview');
+  preview.src = '';
+  preview.style.display = 'none';
   document.getElementById('overlay').setAttribute('data-open','1');
 }
 function closeModal(){
   document.getElementById('overlay').removeAttribute('data-open');
+}
+
+function extractAiPromptSection(text){
+  const lines = text.split('\n');
+  let startIdx = -1;
+  for(let i=0;i<lines.length;i++){
+    if(/AIへの指示/.test(lines[i])){ startIdx = i; break; }
+  }
+  if(startIdx === -1) return {rest:text, extracted:''};
+  let endIdx = lines.length;
+  for(let i=startIdx+1;i<lines.length;i++){
+    const l = lines[i].trim();
+    if(/^[-ー─=]{3,}$/.test(l) || /^[■【]/.test(l)){
+      endIdx = i;
+      break;
+    }
+  }
+  const extractedLines = lines.slice(startIdx+1, endIdx);
+  while(extractedLines.length && /^[-ー─=]{3,}$/.test(extractedLines[0].trim())){
+    extractedLines.shift();
+  }
+  const extracted = extractedLines.join('\n').trim();
+  const rest = lines.slice(0,startIdx).concat(lines.slice(endIdx)).join('\n').trim();
+  return {rest, extracted};
+}
+
+function distributePaste(){
+  const raw = document.getElementById('f-paste').value;
+  if(!raw.trim()) return;
+
+  const urlMatch = raw.match(/https?:\/\/\S+/);
+  if(urlMatch){
+    const urlField = document.getElementById('f-url');
+    if(!urlField.value.trim()) urlField.value = urlMatch[0];
+  }
+
+  const {rest, extracted: aiExtracted} = extractAiPromptSection(raw);
+  if(aiExtracted){
+    const aiField = document.getElementById('f-aiprompt');
+    if(!aiField.value.trim()) aiField.value = aiExtracted;
+  }
+
+  const working = rest.replace(/\n{3,}/g, '\n\n').trim();
+
+  const titleField = document.getElementById('f-title');
+  const bodyField = document.getElementById('f-body');
+  if(working){
+    const firstLine = working.split('\n').map(l => l.trim()).filter(Boolean)[0] || '';
+    if(!titleField.value.trim() && firstLine){
+      titleField.value = firstLine.slice(0,60);
+    }
+    if(!bodyField.value.trim()){
+      bodyField.value = working;
+    }
+  }
+}
+
+function readAndCompressImage(file, maxW, quality){
+  maxW = maxW || 900;
+  quality = quality || 0.75;
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxW / img.width);
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 async function saveCard(){
@@ -758,20 +1009,32 @@ async function saveCard(){
   const cat = document.getElementById('f-cat').value;
   const url = document.getElementById('f-url').value.trim();
   const niches = [...document.querySelectorAll('.niche-check:checked')].map(el => el.value);
+  const importance = parseInt(document.getElementById('f-importance').value, 10) || 0;
+  const effect = parseInt(document.getElementById('f-effect').value, 10) || 0;
+  const practiced = document.getElementById('f-practiced').checked;
+  const result = document.getElementById('f-result').value.trim();
+  const tagsRaw = document.getElementById('f-tags').value.trim();
+  const tags = tagsRaw ? tagsRaw.split(/[\s,、]+/).map(t => t.replace(/^#/, '').trim()).filter(Boolean) : [];
+  const relatedRaw = document.getElementById('f-related').value.trim();
+  const related = relatedRaw ? relatedRaw.split(/[,、]+/).map(t => t.trim()).filter(Boolean) : [];
+  const aiPrompt = document.getElementById('f-aiprompt').value.trim();
+  const image = document.getElementById('f-image-data').value || null;
 
   if(!title || !body){
     alert('タイトルと内容を入力してください');
     return;
   }
-  if(LINK_CATS.has(cat) && url && !/^https?:\/\//i.test(url)){
+  if(url && !/^https?:\/\//i.test(url)){
     alert('URLは http:// または https:// から始めてください');
     return;
   }
   const card = {
     id: 'u-' + Date.now(),
     cat, title, body,
-    url: LINK_CATS.has(cat) && url ? url : null,
-    niches: niches.length ? niches : ["汎用"]
+    url: url || null,
+    niches: niches.length ? niches : ["汎用"],
+    importance, effect, practiced, result,
+    tags, related, aiPrompt, image
   };
   userCards.push(card);
   await persistUserCards();
@@ -858,6 +1121,51 @@ async function importBackup(){
   alert(`${added}件のカードを読み込みました`);
 }
 
+document.getElementById('f-paste').addEventListener('paste', () => {
+  setTimeout(distributePaste, 0);
+});
+document.getElementById('f-image-input').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const dataUrl = await readAndCompressImage(file);
+    document.getElementById('f-image-data').value = dataUrl;
+    const preview = document.getElementById('f-image-preview');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+  }catch(err){
+    alert('画像の読み込みに失敗しました');
+  }
+});
+function copyAiPrompt(btn){
+  const text = btn.getAttribute('data-prompt');
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try{
+    document.execCommand('copy');
+    const original = btn.textContent;
+    btn.textContent = 'コピーした！';
+    setTimeout(() => { btn.textContent = original; }, 1500);
+  }catch(e){
+    alert('コピーできませんでした');
+  }
+  document.body.removeChild(ta);
+}
+function searchFor(term){
+  document.getElementById('search').value = term;
+  render();
+}
+let practicedOnly = false;
+function togglePracticedOnly(){
+  practicedOnly = !practicedOnly;
+  buildChips();
+  render();
+}
 document.getElementById('search').addEventListener('input', render);
 document.getElementById('overlay').addEventListener('click', (e) => {
   if(e.target.id === 'overlay') closeModal();
